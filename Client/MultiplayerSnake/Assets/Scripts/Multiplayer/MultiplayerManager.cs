@@ -48,6 +48,12 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
     {
         _room?.Leave();
     }
+
+    public void SendMesssageToServer(string key, Dictionary<string, object> data)
+    {
+        _room.Send(key, data);
+    }
+
     #endregion
 
     #region Player
@@ -55,6 +61,7 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
     [SerializeField] private Snake _snakePrefab;
     private void CreatePlayer(Player player)
     {
+        Vector3 position = new Vector3(player.x, 0, player.z);
         Snake snake = Instantiate(_snakePrefab);
         snake.Init(player.d);
         Controller controller = Instantiate(_controllerPrefab);

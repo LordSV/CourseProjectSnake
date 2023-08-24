@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3689687959727040319}
   - component: {fileID: 3689687959727040312}
-  - component: {fileID: 3689687959727040318}
   m_Layer: 0
   m_Name: Tail
   m_TagString: Untagged
@@ -50,19 +49,6 @@ MonoBehaviour:
     type: 3}
   _details: []
   _detailDistance: 1.2
---- !u!114 &3689687959727040318
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3689687959727040313}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dbd32f7f7eff0a94d9be1201a8ad8a0c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _target: {fileID: 0}
 --- !u!1 &3689687960144012567
 GameObject:
   m_ObjectHideFlags: 0

@@ -53,4 +53,9 @@ public class Snake : MonoBehaviour
         _targetDirection = cursorPosition - _head.position;
         //_directionPoint.LookAt(cursorPosition);
     }
+
+    public void GetMoveInfo(out Vector3 position)
+    {
+        position = transform.position;
+    }
 }
