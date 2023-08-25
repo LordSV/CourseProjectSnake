@@ -37,7 +37,7 @@ export class StateHandlerRoom extends Room<State> {
 
         this.onMessage("move", (client, data) => {        
             this.state.movePlayer(client.sessionId, data);
-        })
+        });
     }
 
     onAuth(client, options, req) {
