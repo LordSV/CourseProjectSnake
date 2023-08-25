@@ -5,6 +5,7 @@ export class Player extends Schema {
     @type("number") x = Math.floor(Math.random() * 256) -128;
     @type("number") z = Math.floor(Math.random() * 256) -128;
     @type("uint8") d = 2;
+    @type("uint8") skin = 2;
 }
 
 export class State extends Schema {
@@ -13,8 +14,10 @@ export class State extends Schema {
 
     something = "This attribute won't be sent to the client-side";
 
-    createPlayer(sessionId: string) {
-        this.players.set(sessionId, new Player());
+    createPlayer(sessionId: string, skin: number) {
+        const player = new Player();
+        player.skin = skin;
+        this.players.set(sessionId, player);
     }
 
     removePlayer(sessionId: string) {
@@ -29,8 +32,13 @@ export class State extends Schema {
 
 export class StateHandlerRoom extends Room<State> {
     maxClients = 4;
+    lastGivenSkin = 0;
+    skins: number[] = [0];
 
     onCreate (options) {
+        for(var i = 1; i < options.skins; i++){
+            this.skins.push(i);
+        }
         console.log("StateHandlerRoom created!", options);
 
         this.setState(new State());
@@ -45,7 +53,11 @@ export class StateHandlerRoom extends Room<State> {
     }
 
     onJoin (client: Client) {
-        this.state.createPlayer(client.sessionId);
+        this.lastGivenSkin++;
+        if(this.lastGivenSkin >= this.skins.length){
+            this.lastGivenSkin = 0; 
+        }
+        this.state.createPlayer(client.sessionId, this.lastGivenSkin);
     }
 
     onLeave (client) {

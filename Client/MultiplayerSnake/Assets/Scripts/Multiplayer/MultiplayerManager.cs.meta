@@ -6,6 +6,9 @@ MonoImporter:
   defaultReferences:
   - _colyseusSettings: {fileID: 11400000, guid: 3d1645042e9993246ac2e075be2a3d70,
       type: 2}
+  - _skins: {instanceID: 0}
+  - _playerAim: {fileID: 2054695964878624525, guid: 6bc0743d36508d84fa49f2251e601dc7,
+      type: 3}
   - _controllerPrefab: {fileID: 6393180455502175839, guid: 36c66c00582da73448ce91aea165e38a,
       type: 3}
   - _snakePrefab: {fileID: 7589960324555990198, guid: 6f88d5a38857f204dbebb0eeb1fc6c4b,
