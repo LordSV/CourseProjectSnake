@@ -35,10 +35,24 @@ export class StateHandlerRoom extends Room<State> {
     lastGivenSkin = 0;
     skins: number[] = [0];
 
+mixArray(arr){
+        var currentIndex = arr.length;
+        var tmpValue, randomIndex;
+
+        while(currentIndex !== 0){
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex -= 1;
+            tmpValue = arr[currentIndex];
+            arr[currentIndex] = arr[randomIndex];
+            arr[randomIndex] = tmpValue;
+        }
+    }
+
     onCreate (options) {
         for(var i = 1; i < options.skins; i++){
             this.skins.push(i);
         }
+        this.mixArray(this.skins);
         console.log("StateHandlerRoom created!", options);
 
         this.setState(new State());
@@ -57,7 +71,7 @@ export class StateHandlerRoom extends Room<State> {
         if(this.lastGivenSkin >= this.skins.length){
             this.lastGivenSkin = 0; 
         }
-        this.state.createPlayer(client.sessionId, this.lastGivenSkin);
+        this.state.createPlayer(client.sessionId, this.skins[this.lastGivenSkin]);
     }
 
     onLeave (client) {
