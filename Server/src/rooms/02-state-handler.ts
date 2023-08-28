@@ -1,5 +1,10 @@
 import { Room, Client } from "colyseus";
-import { Schema, type, MapSchema } from "@colyseus/schema";
+import { Schema, type, MapSchema, ArraySchema } from "@colyseus/schema";
+
+export class Vector2Float extends Schema{
+    @type("number") x = Math.floor(Math.random() * 256) -128;
+    @type("number") z = Math.floor(Math.random() * 256) -128;
+}
 
 export class Player extends Schema {
     @type("number") x = Math.floor(Math.random() * 256) -128;
@@ -8,10 +13,12 @@ export class Player extends Schema {
 }
 
 export class State extends Schema {
-    @type({ map: Player })
-    players = new MapSchema<Player>();
+    @type({ map: Player }) players = new MapSchema<Player>();
+    @type([Vector2Float]) apples = new ArraySchema<Vector2Float>();
 
-    something = "This attribute won't be sent to the client-side";
+    createApple(){
+        this.apples.push(new Vector2Float());
+    }
 
     createPlayer(sessionId: string) {
         this.players.set(sessionId, new Player());
@@ -29,15 +36,19 @@ export class State extends Schema {
 
 export class StateHandlerRoom extends Room<State> {
     maxClients = 4;
+    startAppleCount = 100;
 
     onCreate (options) {
-        console.log("StateHandlerRoom created!", options);
 
         this.setState(new State());
 
         this.onMessage("move", (client, data) => {        
             this.state.movePlayer(client.sessionId, data);
         });
+
+        for(let i = 0; i < this.startAppleCount; i++){
+            this.state.createApple();
+        }
     }
 
     onAuth(client, options, req) {
