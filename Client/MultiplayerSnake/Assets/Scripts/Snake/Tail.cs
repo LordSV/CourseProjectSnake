@@ -125,4 +125,40 @@ public class Tail : MonoBehaviour
             Destroy(_details[i].gameObject);
         }
     }
+
+    public DetailPositions GetDetailPositions()
+    {
+        int detailsCount = _details.Count;
+        DetailPosition[] ds = new DetailPosition[detailsCount];
+
+        for(int i = 0; i < detailsCount; i++)
+        {
+            ds[i] = new DetailPosition()
+            {
+                x = _details[i].position.x,
+                z = _details[i].position.z,
+            };
+        }
+        DetailPositions detailPositions = new DetailPositions()
+        {
+            ds = ds
+        };
+
+        return detailPositions;
+}
+
+    [System.Serializable]
+    public struct DetailPosition
+    {
+        public float x;
+        public float z;
+    }
+
+    [System.Serializable]
+
+    public struct DetailPositions
+    {
+        public string id;
+        public DetailPosition[] ds;
+    }
 }
