@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,9 +12,15 @@ public class Tail : MonoBehaviour
     private List<Vector3> _positionHistory = new List<Vector3>();
     private List<Quaternion> _rotationHistory = new List<Quaternion>();
     private Transform _head;
+    private int _playerLayer;
+    private bool _isPlayer;
 
-    public void Init(Transform head, float speed, int detailCount)
+    public void Init(Transform head, float speed, int detailCount, int playerLayer, bool isPlayer)
     {
+        _playerLayer = playerLayer;
+        _isPlayer = isPlayer;
+        if (isPlayer) SetPlayerLayer(gameObject);
+
         _snakeSpeed = speed;
         _head = head;
         _details.Add(transform);
@@ -23,6 +30,16 @@ public class Tail : MonoBehaviour
         _rotationHistory.Add(transform.rotation);
 
         SetDetailCount(detailCount);
+    }
+
+    private void SetPlayerLayer(GameObject gameObject)
+    {
+        gameObject.layer = _playerLayer;
+        var childrens = GetComponentsInChildren<Transform>();
+        for (int i = 0; i < childrens.Length; i++)
+        {
+            childrens[i].gameObject.layer = _playerLayer;
+        }
     }
 
     public void SetDetailCount(int detailCount)
@@ -52,6 +69,9 @@ public class Tail : MonoBehaviour
         Vector3 position = _details[_details.Count - 1].position;
         Quaternion rotation = _details[_details.Count - 1].rotation;
         Transform detail = Instantiate(_detailPrefab, position, rotation);  
+
+        if(_isPlayer) SetPlayerLayer(detail.gameObject);    
+
         _details.Insert(0, detail);
         _positionHistory.Add(position);
         _rotationHistory.Add(rotation);
