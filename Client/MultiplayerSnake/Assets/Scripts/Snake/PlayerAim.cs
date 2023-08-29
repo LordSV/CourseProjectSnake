@@ -20,6 +20,7 @@ public class PlayerAim : MonoBehaviour
     {
         Rotate();
         Move();
+        CheckExit();
     }
     private void FixedUpdate()
     {
@@ -37,7 +38,20 @@ public class PlayerAim : MonoBehaviour
             }
             else
             {
-                GameOver();
+                if (colliders[i].GetComponentInParent<Snake>())
+                {
+                    Transform enemy = colliders[i].transform;
+                    float playerAngle = Vector3.Angle(enemy.position - _snakeHead.position, transform.forward);
+                    float enemyAngle = Vector3.Angle(_snakeHead.position - enemy.position, enemy.forward);
+                    if (playerAngle < enemyAngle + 5f)
+                    {
+                        GameOver();
+                    }
+                }
+                else
+                {
+                    GameOver();
+                }
             }
         }
     }
@@ -66,5 +80,10 @@ public class PlayerAim : MonoBehaviour
     private void Move()
     {
         transform.position += transform.forward * _speed * Time.deltaTime;
+    }
+
+    private void CheckExit()
+    {
+        if (Mathf.Abs(_snakeHead.position.x) > 128f || Mathf.Abs(_snakeHead.position.z) > 128f) GameOver();
     }
 }
