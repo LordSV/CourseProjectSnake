@@ -77,6 +77,9 @@ public class Controller : MonoBehaviour
                 case "d":
                     _snake.SetDetailCount((byte)changes[i].Value);
                     break;
+                case "score":
+                    _multiplayerManager.UpdateScore(_clientID, (ushort)changes[i].Value);
+                    break;
                 default:
                     Debug.LogWarning("Не лбрабатывается изменение поля " + changes[i].Field);
                     break;

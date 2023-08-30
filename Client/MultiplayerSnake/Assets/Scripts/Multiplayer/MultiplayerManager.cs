@@ -4,6 +4,8 @@ using UnityEngine;
 using Colyseus;
 using Unity.VisualScripting;
 using System;
+using TMPro;
+using System.Linq;
 
 public class MultiplayerManager : ColyseusManager<MultiplayerManager>
 {
@@ -21,7 +23,11 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
 
     private async void Connection()
     {
-        _room = await client.JoinOrCreate<State>(GameRoomName);
+        Dictionary<string, object> data = new Dictionary<string, object>()
+        {
+            {"login", PlayerSettings.Instance.Login}
+        };
+        _room = await client.JoinOrCreate<State>(GameRoomName, data);
         _room.OnStateChange += OnChange;
     }
 
@@ -83,6 +89,8 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
 
         Controller controller = Instantiate(_controllerPrefab);
         controller.Init(_room.SessionId, aim, player, snake);
+
+        AddLeader(_room.SessionId, player);
     }
     #endregion
 
@@ -99,9 +107,12 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
 
         _enemies.Add(key, enemy);
 
+        AddLeader(key, player);
+
     }
     private void RemoveEnemy(string key, Player player)
     {
+        RemoveLeader(key);
         if (_enemies.ContainsKey(key) == false)
         {
             Debug.LogError("No Enemy for remove");
@@ -131,4 +142,57 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
     }
     #endregion
 
+    #region LeaderBoard
+
+    private class LoginScorePairs
+    {
+        public string login;
+        public float score;
+    }
+
+    [SerializeField] private TextMeshProUGUI _text;
+
+    Dictionary<string, LoginScorePairs> _leaders = new Dictionary<string, LoginScorePairs>();
+
+    private void AddLeader(string sessionID, Player player)
+    {
+        if (_leaders.ContainsKey(sessionID)) return;
+        _leaders.Add(sessionID, new LoginScorePairs
+        {
+            login = player.login,
+            score = player.score
+        });
+        UpdateBoard();
+    }
+
+    private void RemoveLeader(string sessionID)
+    {
+        if (_leaders.ContainsKey(sessionID) == false) return;
+        _leaders.Remove(sessionID);
+
+        UpdateBoard();
+    }
+
+    public void UpdateScore(string sessionID, int score)
+    {
+        if (_leaders.ContainsKey(sessionID) == false) return;
+        _leaders[sessionID].score = score;
+        UpdateBoard();
+    }
+
+    private void UpdateBoard()
+    {
+        int topCount = Math.Clamp(_leaders.Count, 0, 8);
+        var top8 = _leaders.OrderByDescending(pair => pair.Value.score).Take(topCount);
+
+        string text = "";
+        int i = 1;
+        foreach ( var item in top8 )
+        {
+            text += $"{i}. {item.Value.login}: {item.Value.score}\n";
+            i++;
+        }
+        _text.text = text;  
+    }
+    #endregion
 }
